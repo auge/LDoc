@@ -566,8 +566,6 @@ if type(ldoc.examples) == 'table' then
    prettify_source_files(ldoc.examples,"example")
 end
 
-ldoc.is_file_prettified = {}
-
 if ldoc.prettify_files then
    local files = List()
    local linemap = {}
@@ -580,23 +578,6 @@ if ldoc.prettify_files then
       end
       linemap[F.filename] = ls
    end
-
-   if type(ldoc.prettify_files) == 'table' then
-      files = tools.expand_file_list(ldoc.prettify_files, '*.*')
-   elseif type(ldoc.prettify_files) == 'string' then
-      -- the gotcha is that if the person has a folder called 'show', only the contents
-      -- of that directory will be converted.  So, we warn of this amibiguity
-      if ldoc.prettify_files == 'show' then
-         -- just fall through with all module files collected above
-         if path.exists 'show' then
-            print("Notice: if you only want to prettify files in `show`, then set prettify_files to `show/`")
-         end
-      else
-         files = tools.expand_file_list({ldoc.prettify_files}, '*.*')
-      end
-   end
-
-   ldoc.is_file_prettified = tablex.makeset(files)
    prettify_source_files(files,"file",linemap)
 end
 
@@ -810,16 +791,7 @@ ldoc.modules = module_list
 ldoc.title = ldoc.title or args.title
 ldoc.project = ldoc.project or args.project
 ldoc.package = args.package:match '%a+' and args.package or nil
-
-if os.getenv("SOURCE_DATE_EPOCH") == nil then
-  if args.date == 'system' then
-    ldoc.updatetime = os.date("%Y-%m-%d %H:%M:%S")
-  else
-    ldoc.updatetime = args.date
-  end
-else
-  ldoc.updatetime = os.date("!%Y-%m-%d %H:%M:%S",os.getenv("SOURCE_DATE_EPOCH"))
-end
+ldoc.updatetime = os.date("%Y-%m-%d %H:%M:%S")
 
 local html = require 'ldoc.html'
 
@@ -828,8 +800,4 @@ html.generate_output(ldoc, args, project)
 if args.verbose then
    print 'modules'
    for k in pairs(module_list.by_name) do print(k) end
-end
-
-if args.fatalwarnings and Item.had_warning then
-   os.exit(1)
 end
