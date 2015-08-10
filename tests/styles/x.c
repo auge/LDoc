@@ -34,13 +34,23 @@ static int l_createtable (lua_State *L) {
   return 1;
 }
 
+#if LUA_VERSION_NUM == 501
 static const luaL_reg x[] = {
+#elif LUA_VERSION_NUM == 503
+	static const luaL_Reg x[] = {
+#endif
     {"createtable",l_createtable},
     {NULL,NULL}
 };
 
 int luaopen_x(lua_State *L)
 {
-    luaL_register (L, "x", x);
+#if LUA_VERSION_NUM == 501
+	luaL_register (L, "x", x);
+#elif LUA_VERSION_NUM == 503
+	lua_newtable(L);
+	luaL_setfuncs(L, x, 0);
+	lua_setglobal(L, "x");
+#endif
     return 1;
 }

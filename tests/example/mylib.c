@@ -49,14 +49,24 @@ static int l_solve (lua_State *L) {
     }
 }
 
+#if LUA_VERSION_NUM == 501
 static const luaL_reg mylib[] = {
-    {"createtable",l_createtable},
+#elif LUA_VERSION_NUM == 503
+	static const luaL_Reg mylib[] = {
+#endif
+	{"createtable",l_createtable},
     {"solve",l_solve},
     {NULL,NULL}
 };
 
 int luaopen_mylib(lua_State *L)
 {
-    luaL_register (L, "mylib", mylib);
+#if LUA_VERSION_NUM == 501
+	luaL_register (L, "mylib", mylib);
+#elif LUA_VERSION_NUM == 503
+	lua_newtable(L);
+	luaL_setfuncs(L, mylib, 0);
+	lua_setglobal(L, "mylib");
+#endif
     return 1;
 }
