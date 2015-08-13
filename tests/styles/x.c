@@ -28,8 +28,13 @@ the Lua function.
 @return table
 */
 static int l_createtable (lua_State *L) {
+#if LUA_VERSION_NUM == 501
   int narr = luaL_optint(L,1,0);
   int nrec = luaL_optint(L,2,0);
+#elif LUA_VERSION_NUM == 503
+  int narr = luaL_optinteger(L,1,0);
+  int nrec = luaL_optinteger(L,2,0);
+#endif
   lua_createtable(L,narr,nrec);
   return 1;
 }
