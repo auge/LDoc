@@ -225,6 +225,10 @@ function ldoc.manual_url (url)
    global.set_manual_url(url)
 end
 
+function ldoc.tables (tab)
+   global.set_tables(tab)
+end
+
 function ldoc.custom_see_handler(pat, handler)
    doc.add_custom_see_handler(pat, handler)
 end
@@ -241,7 +245,8 @@ local ldoc_contents = {
    'dont_escape_underscore','global_lookup','prettify_files','convert_opt', 'user_keywords',
    'postprocess_html',
    'custom_css','version',
-   'no_args_infer'
+   'no_args_infer',
+   'tables',
 }
 ldoc_contents = tablex.makeset(ldoc_contents)
 
