@@ -28,19 +28,34 @@ the Lua function.
 @return table
 */
 static int l_createtable (lua_State *L) {
+#if LUA_VERSION_NUM == 501
   int narr = luaL_optint(L,1,0);
   int nrec = luaL_optint(L,2,0);
+#elif LUA_VERSION_NUM == 503
+  int narr = luaL_optinteger(L,1,0);
+  int nrec = luaL_optinteger(L,2,0);
+#endif
   lua_createtable(L,narr,nrec);
   return 1;
 }
 
+#if LUA_VERSION_NUM == 501
 static const luaL_reg x[] = {
+#elif LUA_VERSION_NUM == 503
+	static const luaL_Reg x[] = {
+#endif
     {"createtable",l_createtable},
     {NULL,NULL}
 };
 
 int luaopen_x(lua_State *L)
 {
-    luaL_register (L, "x", x);
+#if LUA_VERSION_NUM == 501
+	luaL_register (L, "x", x);
+#elif LUA_VERSION_NUM == 503
+	lua_newtable(L);
+	luaL_setfuncs(L, x, 0);
+	lua_setglobal(L, "x");
+#endif
     return 1;
 }
